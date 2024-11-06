@@ -1,23 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import HomePage from "./components/HomePage";
+import PlayerStats from "./components/PlayerStats";
+import Results from "./components/Results";
+import Fixtures from "./components/Fixtures";
 
 function App() {
+  const [view, setView] = useState("home"); // Default to 'home'
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {view === "home" && <HomePage setView={setView} />}
+      {view === "playerStats" && <PlayerStats setView={setView} />}
+      {view === "results" && <Results setView={setView} />}
+      {view === "fixtures" && <Fixtures setView={setView} />}
     </div>
   );
 }
