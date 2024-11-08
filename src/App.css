@@ -1,0 +1,16 @@
+/* In App.css */
+body {
+  background-image: url("./photos/Emirates-Stadium.jpg"); /* Make sure the path matches your folder structure */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #ffffff; /* Ensures text is readable */
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif; /* Optional: Set a global font */
+  /* Add to your component's CSS or App.css */
+  .section {
+    min-height: 100vh; /* Ensure they take up at least full screen height */
+    width: 100%; /* Make sure they fill the width */
+  }
+}

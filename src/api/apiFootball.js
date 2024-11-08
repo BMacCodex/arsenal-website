@@ -8,6 +8,7 @@ const apiFootball = axios.create({
   },
 });
 
+// Function to fetch fixtures for Arsenal
 export const getFixtures = async () => {
   const teamId = 42; // Arsenal's team ID
   const response = await apiFootball.get("/fixtures", {
@@ -37,7 +38,7 @@ export const getFixtures = async () => {
   return fixturesWithEvents;
 };
 
-// New function to fetch upcoming fixtures for Arsenal
+// Function to fetch upcoming fixtures for Arsenal
 export const getUpcomingFixtures = async () => {
   const teamId = 42; // Arsenal's team ID
   const response = await apiFootball.get("/fixtures", {
@@ -52,6 +53,7 @@ export const getUpcomingFixtures = async () => {
   return response.data.response;
 };
 
+// Function to fetch player stats for the Premier League (Existing)
 export const getPlayerStats = async () => {
   const teamId = 42; // Arsenal's team ID
   const season = 2024;
@@ -79,4 +81,34 @@ export const getPlayerStats = async () => {
   }
 
   return players; // Returns an array with all player stats for the season
+};
+
+// New function to fetch Champions League player stats
+export const getChampionsLeagueStats = async () => {
+  const teamId = 42; // Arsenal's team ID
+  const season = 2024;
+  const league = 2; // Champions League ID (2 corresponds to UEFA Champions League)
+  let players = [];
+  let page = 1;
+  let hasMorePlayers = true;
+
+  while (hasMorePlayers) {
+    const response = await apiFootball.get("/players", {
+      params: {
+        team: teamId,
+        season,
+        league, // Use Champions League ID (2)
+        page, // Incrementing page for each request
+      },
+    });
+
+    const data = response.data.response;
+    players = players.concat(data);
+
+    // Stop if there are no more players to fetch
+    hasMorePlayers = data.length > 0;
+    page += 1; // Move to the next page for the next request
+  }
+
+  return players; // Returns an array with all Champions League player stats for the season
 };

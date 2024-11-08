@@ -7,7 +7,7 @@ function HomePage({ setView }) {
       <Header as="h1" style={{ fontSize: "2.5em" }}>
         Arsenal FC Tracker
       </Header>
-      <p style={{ fontSize: "1.2em" }}>
+      <p style={{ fontSize: "1.2em", color: "black" }}>
         Track Arsenal's player statistics, recent match results, and upcoming
         fixtures!
       </p>
@@ -20,6 +20,10 @@ function HomePage({ setView }) {
       <Button secondary onClick={() => setView("fixtures")}>
         Upcoming Fixtures
       </Button>
+      <Button secondary onClick={() => setView("championsLeagueStats")}>
+        Champions League Stats
+      </Button>{" "}
+      {/* Added button to navigate to Champions League Stats */}
     </Container>
   );
 }

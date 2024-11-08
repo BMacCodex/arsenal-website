@@ -8,6 +8,7 @@ import {
   Card,
   Icon,
   List,
+  Container,
 } from "semantic-ui-react";
 
 function Results({ setView }) {
@@ -33,57 +34,77 @@ function Results({ setView }) {
   };
 
   return (
-    <Segment padded>
-      <Button primary onClick={() => setView("home")} icon labelPosition="left">
-        <Icon name="home" />
-        Back to Home
-      </Button>
-      <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
-        Recent Results
-      </Header>
+    <Container
+      fluid
+      style={{
+        minHeight: "100vh",
+        padding: "0",
+        display: "flex",
+        flexDirection: "column", // Ensure the layout uses flexbox
+      }}
+    >
+      <Segment
+        padded
+        style={{
+          flex: 1, // This allows the Segment to stretch and take the remaining space
+        }}
+      >
+        <Button
+          primary
+          onClick={() => setView("home")}
+          icon
+          labelPosition="left"
+        >
+          <Icon name="home" />
+          Back to Home
+        </Button>
+        <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
+          Recent Results
+        </Header>
 
-      {loading ? (
-        <Loader active inline="centered" size="large">
-          Loading recent results...
-        </Loader>
-      ) : (
-        <Card.Group centered>
-          {results.map((match) => (
-            <Card key={match.fixture.id}>
-              <Card.Content>
-                <Card.Header>
-                  {match.teams.home.name} vs {match.teams.away.name}
-                </Card.Header>
-                <Card.Meta>
-                  <span className="date">
-                    {new Date(match.fixture.date).toLocaleDateString()}
-                  </span>
-                </Card.Meta>
-                <Card.Description>
-                  <p>
-                    <strong>Score:</strong> {match.goals.home} -{" "}
-                    {match.goals.away}
-                  </p>
-                  <List>
-                    <List.Header>Goalscorers</List.Header>
-                    {match.events
-                      .filter((event) => event.type === "Goal")
-                      .map((event, index) => (
-                        <List.Item key={index}>
-                          <Icon name="soccer" />
-                          {event.player.name} ({event.team.name}) -{" "}
-                          {event.time.elapsed}'{" "}
-                          {event.detail === "Penalty" ? "(Penalty)" : ""}
-                        </List.Item>
-                      ))}
-                  </List>
-                </Card.Description>
-              </Card.Content>
-            </Card>
-          ))}
-        </Card.Group>
-      )}
-    </Segment>
+        {loading ? (
+          <Loader active inline="centered" size="large">
+            Loading recent results...
+          </Loader>
+        ) : (
+          <Card.Group centered style={{ width: "100%" }}>
+            {results.map((match) => (
+              <Card key={match.fixture.id}>
+                <Card.Content>
+                  <Card.Header>
+                    {match.teams.home.name} vs {match.teams.away.name}
+                  </Card.Header>
+                  <Card.Meta>
+                    <span className="date">
+                      {new Date(match.fixture.date).toLocaleDateString()}
+                    </span>
+                  </Card.Meta>
+                  <Card.Description>
+                    <p>
+                      <strong>Score:</strong> {match.goals.home} -{" "}
+                      {match.goals.away}
+                    </p>
+                    <List>
+                      <List.Header>Goalscorers</List.Header>
+                      {match.events
+                        .filter((event) => event.type === "Goal")
+                        .map((event, index) => (
+                          <List.Item key={index}>
+                            <Icon name="soccer" />
+                            {event.player.name} ({event.team.name}) -{" "}
+                            {event.time.elapsed}'{" "}
+                            {event.detail === "Penalty" ? "(Penalty)" : ""}
+                          </List.Item>
+                        ))}
+                    </List>
+                  </Card.Description>
+                </Card.Content>
+              </Card>
+            ))}
+          </Card.Group>
+        )}
+      </Segment>
+    </Container>
   );
 }
 
