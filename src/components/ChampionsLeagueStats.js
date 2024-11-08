@@ -12,14 +12,13 @@ function ChampionsLeagueStats() {
     fetchPlayerStats();
   }, []);
 
-  // Fetch player stats for Champions League
   const fetchPlayerStats = async () => {
     try {
       const playerData = await getChampionsLeagueStats(); // Use the new function
       console.log("Champions League Player Data:", playerData);
+      console.log("Fetched Champions League Player Data:", playerData); // Log the data to check its structure
 
       const excludePlayerIds = [
-        // Exclude specific players if necessary
         284540, 1452, 309501, 309505, 190, 283026, 41577, 163068,
       ];
 
@@ -27,6 +26,7 @@ function ChampionsLeagueStats() {
         (player) => !excludePlayerIds.includes(player.player.id)
       );
 
+      console.log("Filtered Players:", filteredPlayers); // Check if filtering is working as expected
       setPlayersCL(filteredPlayers);
       setLoading(false);
     } catch (error) {
@@ -35,32 +35,53 @@ function ChampionsLeagueStats() {
     }
   };
 
+  // Helper function to safely access nested values, including arrays
+  const getValue = (stat, path) => {
+    const pathParts = path.split("."); // Split the path into parts
+
+    return pathParts.reduce((value, part) => {
+      // Handle array indices in the path (e.g., "statistics[0]")
+      const match = part.match(/^(.+)\[(\d+)\]$/);
+      if (match) {
+        const [_, arrayKey, index] = match;
+        return value?.[arrayKey]?.[parseInt(index, 10)] || undefined; // Access the array element
+      }
+      // For normal object properties, just access the key
+      return value?.[part] || undefined;
+    }, stat);
+  };
+
+  // Sorting function
   const handleSort = (clickedColumn) => {
-    if (sortColumn === clickedColumn) {
-      setSortDirection(
-        sortDirection === "ascending" ? "descending" : "ascending"
-      );
-    } else {
-      setSortColumn(clickedColumn);
-      setSortDirection("ascending");
-    }
+    const newDirection =
+      sortColumn === clickedColumn && sortDirection === "ascending"
+        ? "descending"
+        : "ascending";
+
+    setSortColumn(clickedColumn); // Update the current column
+    setSortDirection(newDirection); // Update the direction
+
+    console.log("Sorting by column:", clickedColumn);
+    console.log("New sort direction:", newDirection);
 
     const sortedPlayers = [...playersCL].sort((a, b) => {
       const statA = a.statistics[0];
       const statB = b.statistics[0];
-      const valueA = getValue(statA, clickedColumn) || 0;
-      const valueB = getValue(statB, clickedColumn) || 0;
 
-      if (valueA < valueB) return sortDirection === "ascending" ? -1 : 1;
-      if (valueA > valueB) return sortDirection === "ascending" ? 1 : -1;
-      return 0;
+      // Access the value for the clicked column and log it
+      const valueA = getValue(statA, clickedColumn);
+      const valueB = getValue(statB, clickedColumn);
+
+      console.log("Comparing:", valueA, "vs", valueB);
+
+      if (valueA < valueB) return newDirection === "ascending" ? -1 : 1;
+      if (valueA > valueB) return newDirection === "ascending" ? 1 : -1;
+      return 0; // Equal values
     });
 
-    setPlayersCL(sortedPlayers);
-  };
+    console.log("Sorted Players:", sortedPlayers); // Log the sorted players
 
-  const getValue = (stat, path) => {
-    return path.split(".").reduce((value, key) => value?.[key], stat);
+    setPlayersCL(sortedPlayers); // Update the state with sorted data
   };
 
   return (
@@ -71,12 +92,113 @@ function ChampionsLeagueStats() {
         <Loader active inline="centered" />
       ) : (
         <Table celled sortable>
-          <Table.Header>{/* Table headers and body as before */}</Table.Header>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell onClick={() => handleSort("playerName")}>
+                Player{" "}
+                {sortColumn === "playerName" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => handleSort("statistics[0].games.appearences")}
+              >
+                Appearances{" "}
+                {sortColumn === "statistics[0].games.appearences" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => handleSort("statistics[0].goals.total")}
+              >
+                Goals{" "}
+                {sortColumn === "statistics[0].goals.total" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => handleSort("statistics[0].assists.total")}
+              >
+                Assists{" "}
+                {sortColumn === "statistics[0].assists.total" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => handleSort("statistics[0].cards.yellow")}
+              >
+                Yellow Cards{" "}
+                {sortColumn === "statistics[0].cards.yellow" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => handleSort("statistics[0].cards.red")}
+              >
+                Red Cards{" "}
+                {sortColumn === "statistics[0].cards.red" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => handleSort("statistics[0].games.minutes")}
+              >
+                Minutes Played{" "}
+                {sortColumn === "statistics[0].games.minutes" && (
+                  <Icon
+                    name={
+                      sortDirection === "ascending" ? "arrow up" : "arrow down"
+                    }
+                  />
+                )}
+              </Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
 
           <Table.Body>
             {playersCL.map((player) => (
               <Table.Row key={player.player.id}>
-                {/* Render table rows as before */}
+                <Table.Cell>{player.player.name}</Table.Cell>
+                <Table.Cell>
+                  {player.statistics[0]?.games?.appearences || 0}
+                </Table.Cell>
+                <Table.Cell>
+                  {player.statistics[0]?.goals?.total || 0}
+                </Table.Cell>
+                <Table.Cell>
+                  {player.statistics[0]?.assists?.total || 0}
+                </Table.Cell>
+                <Table.Cell>
+                  {player.statistics[0]?.cards?.yellow || 0}
+                </Table.Cell>
+                <Table.Cell>{player.statistics[0]?.cards?.red || 0}</Table.Cell>
+                <Table.Cell>
+                  {player.statistics[0]?.games?.minutes || 0}
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
