@@ -3,12 +3,13 @@ import HomePage from "./components/HomePage";
 import PlayerStats from "./components/PlayerStats";
 import Results from "./components/Results";
 import Fixtures from "./components/Fixtures";
-import ChampionsLeagueStats from "./components/ChampionsLeagueStats"; // Import the ChampionsLeagueStats component
+import ChampionsLeagueStats from "./components/ChampionsLeagueStats";
+import TeamStats from "./components/TeamStats";
 import "./App.css";
-import { Container } from "semantic-ui-react"; // Import the Container component
+import { Container } from "semantic-ui-react";
 
 function App() {
-  const [view, setView] = useState("home"); // Default to 'home'
+  const [view, setView] = useState("home");
 
   return (
     <Container fluid style={{ minHeight: "100vh" }}>
@@ -18,8 +19,8 @@ function App() {
       {view === "fixtures" && <Fixtures setView={setView} />}
       {view === "championsLeagueStats" && (
         <ChampionsLeagueStats setView={setView} />
-      )}{" "}
-      {/* Add the Champions League stats view */}
+      )}
+      {view === "teamStats" && <TeamStats setView={setView} />} {/* Added */}
     </Container>
   );
 }

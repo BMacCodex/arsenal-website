@@ -24,6 +24,8 @@ function HomePage({ setView }) {
         Champions League Stats
       </Button>{" "}
       {/* Added button to navigate to Champions League Stats */}
+      <Button onClick={() => setView("teamStats")}>Team Stats</Button>{" "}
+      {/* Add Team Stats button */}
     </Container>
   );
 }

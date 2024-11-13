@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getChampionsLeagueStats } from "../api/apiFootball"; // Import the new function
-import { Table, Header, Loader, Segment, Icon } from "semantic-ui-react";
+import {
+  Table,
+  Header,
+  Loader,
+  Segment,
+  Icon,
+  Button,
+  Container,
+} from "semantic-ui-react";
 
-function ChampionsLeagueStats() {
+function ChampionsLeagueStats({ setView }) {
   const [playersCL, setPlayersCL] = useState([]); // State to hold Champions League player data
   const [loading, setLoading] = useState(true);
   const [sortColumn, setSortColumn] = useState("playerName");
@@ -85,126 +93,166 @@ function ChampionsLeagueStats() {
   };
 
   return (
-    <Segment>
-      <Header as="h2">Champions League Player Stats</Header>
+    <Container
+      fluid
+      style={{
+        minHeight: "100vh",
+        padding: "0",
+        display: "flex",
+        flexDirection: "column", // Flexbox to ensure full height
+      }}
+    >
+      <Segment
+        padded
+        style={{
+          flex: 1, // This allows the Segment to stretch and take the remaining space
+        }}
+      >
+        <Button
+          primary
+          onClick={() => setView("home")}
+          icon
+          labelPosition="left"
+        >
+          <Icon name="home" />
+          Back to Home
+        </Button>
+        <Header as="h2">Champions League Player Stats</Header>
 
-      {loading ? (
-        <Loader active inline="centered" />
-      ) : (
-        <Table celled sortable>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell onClick={() => handleSort("playerName")}>
-                Player{" "}
-                {sortColumn === "playerName" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => handleSort("statistics[0].games.appearences")}
-              >
-                Appearances{" "}
-                {sortColumn === "statistics[0].games.appearences" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => handleSort("statistics[0].goals.total")}
-              >
-                Goals{" "}
-                {sortColumn === "statistics[0].goals.total" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => handleSort("statistics[0].assists.total")}
-              >
-                Assists{" "}
-                {sortColumn === "statistics[0].assists.total" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => handleSort("statistics[0].cards.yellow")}
-              >
-                Yellow Cards{" "}
-                {sortColumn === "statistics[0].cards.yellow" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => handleSort("statistics[0].cards.red")}
-              >
-                Red Cards{" "}
-                {sortColumn === "statistics[0].cards.red" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => handleSort("statistics[0].games.minutes")}
-              >
-                Minutes Played{" "}
-                {sortColumn === "statistics[0].games.minutes" && (
-                  <Icon
-                    name={
-                      sortDirection === "ascending" ? "arrow up" : "arrow down"
-                    }
-                  />
-                )}
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {playersCL.map((player) => (
-              <Table.Row key={player.player.id}>
-                <Table.Cell>{player.player.name}</Table.Cell>
-                <Table.Cell>
-                  {player.statistics[0]?.games?.appearences || 0}
-                </Table.Cell>
-                <Table.Cell>
-                  {player.statistics[0]?.goals?.total || 0}
-                </Table.Cell>
-                <Table.Cell>
-                  {player.statistics[0]?.assists?.total || 0}
-                </Table.Cell>
-                <Table.Cell>
-                  {player.statistics[0]?.cards?.yellow || 0}
-                </Table.Cell>
-                <Table.Cell>{player.statistics[0]?.cards?.red || 0}</Table.Cell>
-                <Table.Cell>
-                  {player.statistics[0]?.games?.minutes || 0}
-                </Table.Cell>
+        {loading ? (
+          <Loader active inline="centered" />
+        ) : (
+          <Table celled sortable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell onClick={() => handleSort("playerName")}>
+                  Player{" "}
+                  {sortColumn === "playerName" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  onClick={() => handleSort("statistics[0].games.appearences")}
+                >
+                  Appearances{" "}
+                  {sortColumn === "statistics[0].games.appearences" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  onClick={() => handleSort("statistics[0].goals.total")}
+                >
+                  Goals{" "}
+                  {sortColumn === "statistics[0].goals.total" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  onClick={() => handleSort("statistics[0].assists.total")}
+                >
+                  Assists{" "}
+                  {sortColumn === "statistics[0].assists.total" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  onClick={() => handleSort("statistics[0].cards.yellow")}
+                >
+                  Yellow Cards{" "}
+                  {sortColumn === "statistics[0].cards.yellow" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  onClick={() => handleSort("statistics[0].cards.red")}
+                >
+                  Red Cards{" "}
+                  {sortColumn === "statistics[0].cards.red" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
+                <Table.HeaderCell
+                  onClick={() => handleSort("statistics[0].games.minutes")}
+                >
+                  Minutes Played{" "}
+                  {sortColumn === "statistics[0].games.minutes" && (
+                    <Icon
+                      name={
+                        sortDirection === "ascending"
+                          ? "arrow up"
+                          : "arrow down"
+                      }
+                    />
+                  )}
+                </Table.HeaderCell>
               </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      )}
-    </Segment>
+            </Table.Header>
+
+            <Table.Body>
+              {playersCL.map((player) => (
+                <Table.Row key={player.player.id}>
+                  <Table.Cell>{player.player.name}</Table.Cell>
+                  <Table.Cell>
+                    {player.statistics[0]?.games?.appearences || 0}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {player.statistics[0]?.goals?.total || 0}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {player.statistics[0]?.assists?.total || 0}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {player.statistics[0]?.cards?.yellow || 0}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {player.statistics[0]?.cards?.red || 0}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {player.statistics[0]?.games?.minutes || 0}
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        )}
+      </Segment>
+    </Container>
   );
 }
 

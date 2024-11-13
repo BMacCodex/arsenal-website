@@ -112,3 +112,38 @@ export const getChampionsLeagueStats = async () => {
 
   return players; // Returns an array with all Champions League player stats for the season
 };
+
+export const getArsenalTeamStats = async () => {
+  const teamId = 42; // Arsenal's team ID
+  const season = 2024;
+  const league = 39; // Premier League ID
+
+  const response = await apiFootball.get("/teams/statistics", {
+    params: {
+      team: teamId,
+      season,
+      league,
+    },
+  });
+
+  return response.data.response; // Returns Arsenal's team statistics
+};
+
+// Fetch detailed match information including lineups and events
+export const getMatchDetails = async (fixtureId) => {
+  try {
+    const [lineupResponse, eventsResponse] = await Promise.all([
+      apiFootball.get(`/fixtures/lineups`, { params: { fixture: fixtureId } }),
+      apiFootball.get(`/fixtures/events`, { params: { fixture: fixtureId } }),
+    ]);
+
+    // Return an object containing both lineups and events
+    return {
+      lineups: lineupResponse.data.response,
+      events: eventsResponse.data.response,
+    };
+  } catch (error) {
+    console.error("Error fetching match details:", error);
+    return { lineups: [], events: [] }; // Return empty arrays on error
+  }
+};
