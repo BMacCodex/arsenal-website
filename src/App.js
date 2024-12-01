@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import PlayerStats from "./components/PlayerStats";
 import Results from "./components/Results";
@@ -9,19 +10,22 @@ import "./App.css";
 import { Container } from "semantic-ui-react";
 
 function App() {
-  const [view, setView] = useState("home");
-
   return (
-    <Container fluid style={{ minHeight: "100vh" }}>
-      {view === "home" && <HomePage setView={setView} />}
-      {view === "playerStats" && <PlayerStats setView={setView} />}
-      {view === "results" && <Results setView={setView} />}
-      {view === "fixtures" && <Fixtures setView={setView} />}
-      {view === "championsLeagueStats" && (
-        <ChampionsLeagueStats setView={setView} />
-      )}
-      {view === "teamStats" && <TeamStats setView={setView} />} {/* Added */}
-    </Container>
+    <Router>
+      <Container fluid style={{ minHeight: "100vh" }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/player-stats" element={<PlayerStats />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/fixtures" element={<Fixtures />} />
+          <Route
+            path="/champions-league-stats"
+            element={<ChampionsLeagueStats />}
+          />
+          <Route path="/team-stats" element={<TeamStats />} />
+        </Routes>
+      </Container>
+    </Router>
   );
 }
 

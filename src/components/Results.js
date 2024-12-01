@@ -11,13 +11,16 @@ import {
   Container,
   Modal,
 } from "semantic-ui-react";
+import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 
-function Results({ setView }) {
+function Results() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMatch, setSelectedMatch] = useState(null); // Selected match details
-  const [modalOpen, setModalOpen] = useState(false); // Modal state
-  const [loadingDetails, setLoadingDetails] = useState(false); // Loading state for details
+  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     fetchResults();
@@ -37,13 +40,10 @@ function Results({ setView }) {
     }
   };
 
-  // Fetch match details when a match card is clicked
   const handleMatchClick = async (fixtureId) => {
     setLoadingDetails(true);
     try {
       const matchDetails = await getMatchDetails(fixtureId);
-      console.log("Fetched match details:", matchDetails); // Debugging line
-      console.log("Lineups:", matchDetails.lineups); // Check if lineups is present and has data
       setSelectedMatch(matchDetails);
       setModalOpen(true);
     } catch (error) {
@@ -64,15 +64,12 @@ function Results({ setView }) {
       }}
     >
       <Segment padded style={{ flex: 1 }}>
-        <Button
-          primary
-          onClick={() => setView("home")}
-          icon
-          labelPosition="left"
-        >
-          <Icon name="home" />
+        {/* Back Button using Link */}
+        <Button as={Link} to="/" icon labelPosition="left">
+          <Icon name="arrow left" />
           Back to Home
         </Button>
+
         <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
           Recent Results
         </Header>
@@ -122,7 +119,6 @@ function Results({ setView }) {
           </Card.Group>
         )}
 
-        {/* Modal for Match Details */}
         <Modal open={modalOpen} onClose={() => setModalOpen(false)} closeIcon>
           <Modal.Header>Match Details</Modal.Header>
           <Modal.Content>
@@ -134,21 +130,17 @@ function Results({ setView }) {
               <>
                 <Header as="h3">Lineups</Header>
                 <List>
-                  {selectedMatch.lineups && selectedMatch.lineups.length > 0 ? (
-                    selectedMatch.lineups.map((lineup, index) => {
-                      console.log("Rendering lineup for:", lineup.team.name);
-                      console.log("StartXI data:", lineup.startXI); // Debug startXI data
-                      return (
-                        <List.Item key={index}>
-                          <strong>{lineup.team.name}:</strong>{" "}
-                          {lineup.startXI
-                            ? lineup.startXI
-                                .map((player) => player.player.name)
-                                .join(", ")
-                            : "No lineup data available"}
-                        </List.Item>
-                      );
-                    })
+                  {selectedMatch.lineups?.length > 0 ? (
+                    selectedMatch.lineups.map((lineup, index) => (
+                      <List.Item key={index}>
+                        <strong>{lineup.team.name}:</strong>{" "}
+                        {lineup.startXI
+                          ? lineup.startXI
+                              .map((player) => player.player.name)
+                              .join(", ")
+                          : "No lineup data available"}
+                      </List.Item>
+                    ))
                   ) : (
                     <p>No lineup data available.</p>
                   )}
@@ -156,7 +148,7 @@ function Results({ setView }) {
 
                 <Header as="h3">Events</Header>
                 <List>
-                  {selectedMatch.events && selectedMatch.events.length > 0 ? (
+                  {selectedMatch.events?.length > 0 ? (
                     selectedMatch.events.map((event, index) => (
                       <List.Item key={index}>
                         <Icon

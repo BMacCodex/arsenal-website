@@ -1,4 +1,3 @@
-// In TeamStats.js
 import React, { useEffect, useState } from "react";
 import { getArsenalTeamStats } from "../api/apiFootball";
 import {
@@ -9,8 +8,9 @@ import {
   Container,
   Segment,
 } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
-function TeamStats({ setView }) {
+function TeamStats() {
   const [teamStats, setTeamStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,7 @@ function TeamStats({ setView }) {
     const fetchStats = async () => {
       try {
         const data = await getArsenalTeamStats();
-        console.log("Fetched Arsenal Team Stats:", data); // Debug: log the response data
+        console.log("Fetched Arsenal Team Stats:", data);
         setTeamStats(data);
       } catch (error) {
         console.error("Error fetching team stats:", error);
@@ -37,69 +37,66 @@ function TeamStats({ setView }) {
         minHeight: "100vh",
         padding: "0",
         display: "flex",
-        flexDirection: "column", // Flexbox to ensure full height
+        flexDirection: "column",
       }}
     >
       <Segment
         padded
         style={{
-          flex: 1, // Allow Segment to take remaining space
+          flex: 1,
         }}
       >
-        <div>
-          <Header as="h2">Arsenal Premier League Statistics</Header>
-          <Button onClick={() => setView("home")}>Back to Home</Button>
-          {loading ? (
-            <Loader active inline="centered" />
-          ) : teamStats ? (
-            <Table celled>
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell>Games Played</Table.Cell>
-                  <Table.Cell>
-                    {teamStats.fixtures?.played?.total || 0}
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Wins</Table.Cell>
-                  <Table.Cell>
-                    {teamStats.fixtures?.wins?.total || 0}
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Draws</Table.Cell>
-                  <Table.Cell>
-                    {teamStats.fixtures?.draws?.total || 0}
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Losses</Table.Cell>
-                  <Table.Cell>
-                    {teamStats.fixtures?.loses?.total || 0}
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Goals Scored</Table.Cell>
-                  <Table.Cell>
-                    {teamStats.goals?.for?.total?.total || 0}
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Goals Conceded</Table.Cell>
-                  <Table.Cell>
-                    {teamStats.goals?.against?.total?.total || 0}
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Clean Sheets</Table.Cell>
-                  <Table.Cell>{teamStats.clean_sheet?.total || 0}</Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table>
-          ) : (
-            <p>No data available</p>
-          )}
-        </div>
+        <Header as="h2" textAlign="center">
+          Arsenal Premier League Statistics
+        </Header>
+
+        {/* Back Button using Link */}
+        <Button as={Link} to="/" primary icon="home" content="Back to Home" />
+
+        {loading ? (
+          <Loader active inline="centered" size="large" />
+        ) : teamStats ? (
+          <Table celled>
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>Games Played</Table.Cell>
+                <Table.Cell>
+                  {teamStats.fixtures?.played?.total || 0}
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>Wins</Table.Cell>
+                <Table.Cell>{teamStats.fixtures?.wins?.total || 0}</Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>Draws</Table.Cell>
+                <Table.Cell>{teamStats.fixtures?.draws?.total || 0}</Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>Losses</Table.Cell>
+                <Table.Cell>{teamStats.fixtures?.loses?.total || 0}</Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>Goals Scored</Table.Cell>
+                <Table.Cell>
+                  {teamStats.goals?.for?.total?.total || 0}
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>Goals Conceded</Table.Cell>
+                <Table.Cell>
+                  {teamStats.goals?.against?.total?.total || 0}
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>Clean Sheets</Table.Cell>
+                <Table.Cell>{teamStats.clean_sheet?.total || 0}</Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+        ) : (
+          <p>No data available</p>
+        )}
       </Segment>
     </Container>
   );

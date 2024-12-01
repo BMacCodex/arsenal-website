@@ -7,13 +7,17 @@ import {
   Segment,
   Icon,
   Container,
+  Button,
 } from "semantic-ui-react";
+import { Link, useNavigate } from "react-router-dom";
 
-function PlayerStats({ setView }) {
+function PlayerStats() {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortColumn, setSortColumn] = useState("playerName");
   const [sortDirection, setSortDirection] = useState("ascending");
+
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
   useEffect(() => {
     fetchPlayerStats();
@@ -78,20 +82,24 @@ function PlayerStats({ setView }) {
         minHeight: "100vh",
         padding: "0",
         display: "flex",
-        flexDirection: "column", // Ensure the layout uses flexbox
+        flexDirection: "column",
       }}
     >
       <Segment
         padded
         style={{
-          flex: 1, // This allows the Segment to stretch and take the remaining space
+          flex: 1,
         }}
       >
         <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
           Arsenal Player Stats
         </Header>
 
-        <button onClick={() => setView("home")}>Back to Home</button>
+        {/* Back button using Link */}
+        <Button as={Link} to="/" icon labelPosition="left">
+          <Icon name="arrow left" />
+          Back to Home
+        </Button>
 
         {loading ? (
           <Loader active inline="centered" size="large">

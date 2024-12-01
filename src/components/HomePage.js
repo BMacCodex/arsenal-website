@@ -1,7 +1,8 @@
 import React from "react";
 import { Container, Header, Button } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
-function HomePage({ setView }) {
+function HomePage() {
   return (
     <Container textAlign="center" style={{ marginTop: "2em" }}>
       <Header as="h1" style={{ fontSize: "2.5em" }}>
@@ -11,21 +12,22 @@ function HomePage({ setView }) {
         Track Arsenal's player statistics, recent match results, and upcoming
         fixtures!
       </p>
-      <Button primary onClick={() => setView("playerStats")}>
+
+      <Button primary as={Link} to="/player-stats">
         View Player Stats
       </Button>
-      <Button secondary onClick={() => setView("results")}>
+      <Button secondary as={Link} to="/results">
         Recent Results
       </Button>
-      <Button secondary onClick={() => setView("fixtures")}>
+      <Button secondary as={Link} to="/fixtures">
         Upcoming Fixtures
       </Button>
-      <Button secondary onClick={() => setView("championsLeagueStats")}>
+      <Button secondary as={Link} to="/champions-league-stats">
         Champions League Stats
-      </Button>{" "}
-      {/* Added button to navigate to Champions League Stats */}
-      <Button onClick={() => setView("teamStats")}>Team Stats</Button>{" "}
-      {/* Add Team Stats button */}
+      </Button>
+      <Button as={Link} to="/team-stats">
+        Team Stats
+      </Button>
     </Container>
   );
 }

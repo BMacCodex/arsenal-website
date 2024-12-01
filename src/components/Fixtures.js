@@ -9,10 +9,13 @@ import {
   Icon,
   Container,
 } from "semantic-ui-react";
+import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 
-function Fixtures({ setView }) {
+function Fixtures() {
   const [fixtures, setFixtures] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     fetchFixtures();
@@ -35,24 +38,16 @@ function Fixtures({ setView }) {
         minHeight: "100vh",
         padding: "0",
         display: "flex",
-        flexDirection: "column", // Flexbox to ensure full height
+        flexDirection: "column",
       }}
     >
-      <Segment
-        padded
-        style={{
-          flex: 1, // Allow Segment to take remaining space
-        }}
-      >
-        <Button
-          primary
-          onClick={() => setView("home")}
-          icon
-          labelPosition="left"
-        >
-          <Icon name="home" />
+      <Segment padded style={{ flex: 1 }}>
+        {/* Back Button using Link */}
+        <Button as={Link} to="/" icon labelPosition="left">
+          <Icon name="arrow left" />
           Back to Home
         </Button>
+
         <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
           Upcoming Fixtures
         </Header>

@@ -53,10 +53,8 @@ export const getUpcomingFixtures = async () => {
   return response.data.response;
 };
 
-// Function to fetch player stats for the Premier League (Existing)
-export const getPlayerStats = async () => {
+export const getPlayerStats = async (season = 2024) => {
   const teamId = 42; // Arsenal's team ID
-  const season = 2024;
   const league = 39; // Premier League
   let players = [];
   let page = 1;
@@ -66,9 +64,9 @@ export const getPlayerStats = async () => {
     const response = await apiFootball.get("/players", {
       params: {
         team: teamId,
-        season,
+        season, // Use the passed season parameter
         league,
-        page, // Incrementing page for each request
+        page,
       },
     });
 
@@ -77,7 +75,7 @@ export const getPlayerStats = async () => {
 
     // Stop if there are no more players to fetch
     hasMorePlayers = data.length > 0;
-    page += 1; // Move to the next page for the next request
+    page += 1;
   }
 
   return players; // Returns an array with all player stats for the season
