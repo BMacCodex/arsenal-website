@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NavBar from "./components/NavBar";
 import HomePage from "./components/HomePage";
 import PlayerStats from "./components/PlayerStats";
 import Results from "./components/Results";
@@ -12,7 +13,8 @@ import { Container } from "semantic-ui-react";
 function App() {
   return (
     <Router>
-      <Container fluid style={{ minHeight: "100vh" }}>
+      <NavBar />
+      <Container fluid style={{ minHeight: "100vh", paddingTop: "2em" }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/player-stats" element={<PlayerStats />} />
