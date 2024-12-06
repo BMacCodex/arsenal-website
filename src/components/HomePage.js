@@ -12,22 +12,6 @@ function HomePage() {
         Track Arsenal's player statistics, recent match results, and upcoming
         fixtures!
       </p>
-
-      <Button primary as={Link} to="/player-stats">
-        View Player Stats
-      </Button>
-      <Button secondary as={Link} to="/results">
-        Recent Results
-      </Button>
-      <Button secondary as={Link} to="/fixtures">
-        Upcoming Fixtures
-      </Button>
-      <Button secondary as={Link} to="/champions-league-stats">
-        Champions League Stats
-      </Button>
-      <Button as={Link} to="/team-stats">
-        Team Stats
-      </Button>
     </Container>
   );
 }

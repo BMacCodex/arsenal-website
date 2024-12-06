@@ -15,7 +15,7 @@ export const getFixtures = async () => {
     params: {
       team: teamId,
       season: 2024,
-      last: 5, // Adjust to get the last 5 results
+      last: 10, // Adjust to get the last 20 results
     },
   });
   const fixtures = response.data.response;
