@@ -1,0 +1,7 @@
+.player-stats-container {
+  background-color: red; /* Sets the background color to red */
+  min-height: 100vh; /* Ensures it covers the full viewport height */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

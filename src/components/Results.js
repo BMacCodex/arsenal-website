@@ -3,7 +3,7 @@ import { getFixtures } from "../api/apiFootball";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { Button, Loader, Container } from "semantic-ui-react";
+import { Button, Loader, Container, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
 function Results() {
@@ -61,25 +61,32 @@ function Results() {
   };
 
   return (
-    <Container fluid>
-      {loading ? (
-        <Loader active inline="centered" size="large">
-          Loading recent results...
-        </Loader>
-      ) : (
-        <div
-          className="ag-theme-alpine"
-          style={{ height: "600px", width: "100%" }}
-        >
-          <AgGridReact
-            columnDefs={columnDefs}
-            rowData={rowData}
-            pagination={true}
-            paginationPageSize={5}
-            domLayout="normal"
-          />
-        </div>
-      )}
+    <Container fluid style={{ backgroundColor: "red" }}>
+      <Segment padded style={{ backgroundColor: "red" }}>
+        {loading ? (
+          <Loader active inline="centered" size="large">
+            Loading recent results...
+          </Loader>
+        ) : (
+          <div
+            className="ag-theme-alpine"
+            style={{
+              height: "710px",
+              width: "100%",
+              marginTop: "10px",
+              backgroundColor: "red",
+            }}
+          >
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={rowData}
+              pagination={true}
+              paginationPageSize={2}
+              domLayout="normal"
+            />
+          </div>
+        )}
+      </Segment>
     </Container>
   );
 }

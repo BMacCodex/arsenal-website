@@ -9,12 +9,13 @@ import ChampionsLeagueStats from "./components/ChampionsLeagueStats";
 import TeamStats from "./components/TeamStats";
 import "./App.css";
 import { Container } from "semantic-ui-react";
+import "semantic-ui-css/semantic.min.css";
 
 function App() {
   return (
     <Router>
-      <NavBar />
       <Container fluid style={{ minHeight: "100vh", paddingTop: "2em" }}>
+        <NavBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/player-stats" element={<PlayerStats />} />

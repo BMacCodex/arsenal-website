@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getPlayerStats } from "../api/apiFootball";
 import {
-  Table,
   Header,
   Loader,
   Segment,
@@ -9,15 +8,15 @@ import {
   Container,
   Button,
 } from "semantic-ui-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import "./PlayerStats.css";
 
 function PlayerStats() {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortColumn, setSortColumn] = useState("playerName");
-  const [sortDirection, setSortDirection] = useState("ascending");
-
-  const navigate = useNavigate(); // Hook for programmatic navigation
 
   useEffect(() => {
     fetchPlayerStats();
@@ -26,8 +25,8 @@ function PlayerStats() {
   const fetchPlayerStats = async () => {
     try {
       const playerData = await getPlayerStats();
-      console.log("Player Data:", playerData);
 
+      // Exclude certain player IDs
       const excludePlayerIds = [
         284540, 1452, 309501, 309505, 190, 283026, 41577, 163068, 396206,
         339175, 313229, 727, 1161, 407033, 153407, 309506, 284557, 380697,
@@ -39,7 +38,18 @@ function PlayerStats() {
         (player) => !excludePlayerIds.includes(player.player.id)
       );
 
-      setPlayers(filteredPlayers);
+      const rowData = filteredPlayers.map((player) => ({
+        playerName: player.player.name,
+        appearances: player.statistics[0]?.games?.appearences || 0,
+        goals: player.statistics[0]?.goals?.total || 0,
+        assists: player.statistics[0]?.goals?.assists || 0,
+        yellowCards: player.statistics[0]?.cards?.yellow || 0,
+        redCards: player.statistics[0]?.cards?.red || 0,
+        averageRating: player.statistics[0]?.games?.rating || "N/A",
+        minutesPlayed: player.statistics[0]?.games?.minutes || 0,
+      }));
+
+      setPlayers(rowData);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching player stats:", error);
@@ -47,202 +57,65 @@ function PlayerStats() {
     }
   };
 
-  const handleSort = (clickedColumn) => {
-    if (sortColumn === clickedColumn) {
-      setSortDirection(
-        sortDirection === "ascending" ? "descending" : "ascending"
-      );
-    } else {
-      setSortColumn(clickedColumn);
-      setSortDirection("ascending");
-    }
-
-    const sortedPlayers = [...players].sort((a, b) => {
-      const statA = a.statistics[0];
-      const statB = b.statistics[0];
-      const valueA = getValue(statA, clickedColumn) || 0;
-      const valueB = getValue(statB, clickedColumn) || 0;
-
-      if (valueA < valueB) return sortDirection === "ascending" ? -1 : 1;
-      if (valueA > valueB) return sortDirection === "ascending" ? 1 : -1;
-      return 0;
-    });
-
-    setPlayers(sortedPlayers);
-  };
-
-  const getValue = (stat, path) => {
-    return path.split(".").reduce((value, key) => value?.[key], stat);
-  };
+  const columnDefs = [
+    { headerName: "Player", field: "playerName", sortable: true, filter: true },
+    { headerName: "Appearances", field: "appearances", sortable: true },
+    { headerName: "Goals", field: "goals", sortable: true },
+    { headerName: "Assists", field: "assists", sortable: true },
+    { headerName: "Yellow Cards", field: "yellowCards", sortable: true },
+    { headerName: "Red Cards", field: "redCards", sortable: true },
+    { headerName: "Average Rating", field: "averageRating", sortable: true },
+    { headerName: "Minutes Played", field: "minutesPlayed", sortable: true },
+  ];
 
   return (
-    <Container
-      fluid
-      style={{
-        minHeight: "100vh",
-        padding: "0",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Segment
-        padded
+    <div className="player-stats-container">
+      <Container
+        fluid
         style={{
-          flex: 1,
+          minHeight: "100vh",
+          padding: "0",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "red",
         }}
       >
-        <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
-          Arsenal Player Stats
-        </Header>
+        <Segment
+          padded
+          style={{
+            flex: 1,
+            backgroundColor: "red",
+          }}
+        >
+          <Button as={Link} to="/" primary icon="home" content="Back to Home" />
+          <Header as="h2" textAlign="center" style={{ marginTop: "20px" }}>
+            Arsenal Player Stats
+          </Header>
 
-        {/* Back button using Link */}
-        <Button as={Link} to="/" icon labelPosition="left">
-          <Icon name="arrow left" />
-          Back to Home
-        </Button>
-
-        {loading ? (
-          <Loader active inline="centered" size="large">
-            Loading player stats...
-          </Loader>
-        ) : (
-          <Table celled sortable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell onClick={() => handleSort("playerName")}>
-                  Player{" "}
-                  {sortColumn === "playerName" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("games.appearences")}
-                >
-                  Appearances{" "}
-                  {sortColumn === "games.appearences" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell onClick={() => handleSort("goals.total")}>
-                  Goals{" "}
-                  {sortColumn === "goals.total" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell onClick={() => handleSort("goals.assists")}>
-                  Assists{" "}
-                  {sortColumn === "goals.assists" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell onClick={() => handleSort("cards.yellow")}>
-                  Yellow Cards{" "}
-                  {sortColumn === "cards.yellow" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell onClick={() => handleSort("cards.red")}>
-                  Red Cards{" "}
-                  {sortColumn === "cards.red" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell onClick={() => handleSort("games.rating")}>
-                  Average Rating{" "}
-                  {sortColumn === "games.rating" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell onClick={() => handleSort("games.minutes")}>
-                  Minutes Played{" "}
-                  {sortColumn === "games.minutes" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {players.map((player) => (
-                <Table.Row key={player.player.id}>
-                  <Table.Cell>
-                    <Icon name="user circle" />
-                    {player.player.name}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0].games.appearences || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0].goals.total || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0].goals.assists || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0].cards.yellow || 0}
-                  </Table.Cell>
-                  <Table.Cell>{player.statistics[0].cards.red || 0}</Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0].games.rating || "N/A"}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0].games.minutes || 0}
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        )}
-      </Segment>
-    </Container>
+          {loading ? (
+            <Loader active inline="centered" size="large">
+              Loading player stats...
+            </Loader>
+          ) : (
+            <div
+              className="ui segment ag-theme-alpine"
+              style={{
+                height: "100%",
+                width: "100%",
+                marginTop: "20px",
+              }}
+            >
+              <AgGridReact
+                rowData={players}
+                columnDefs={columnDefs}
+                pagination={false}
+                domLayout="autoHeight"
+              />
+            </div>
+          )}
+        </Segment>
+      </Container>
+    </div>
   );
 }
 

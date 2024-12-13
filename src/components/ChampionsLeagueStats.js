@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getChampionsLeagueStats } from "../api/apiFootball";
 import {
-  Table,
   Header,
   Loader,
   Segment,
@@ -9,15 +8,14 @@ import {
   Button,
   Container,
 } from "semantic-ui-react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import { Link } from "react-router-dom"; // Import Link
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 
 function ChampionsLeagueStats() {
   const [playersCL, setPlayersCL] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortColumn, setSortColumn] = useState("playerName");
-  const [sortDirection, setSortDirection] = useState("ascending");
-
-  const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     fetchPlayerStats();
@@ -26,14 +24,17 @@ function ChampionsLeagueStats() {
   const fetchPlayerStats = async () => {
     try {
       const playerData = await getChampionsLeagueStats();
+      console.log("Player Data:", playerData);
       const excludePlayerIds = [
-        284540, 1452, 309501, 309505, 190, 283026, 41577, 163068,
+        1427, 169295, 41725, 407033, 153407, 278074, 309506, 284557, 380697,
+        416697, 342243, 313229, 1468, 727, 1161, 20355,
       ];
 
       const filteredPlayers = playerData.filter(
         (player) => !excludePlayerIds.includes(player.player.id)
       );
 
+      console.log("Filtered Players:", filteredPlayers);
       setPlayersCL(filteredPlayers);
       setLoading(false);
     } catch (error) {
@@ -42,40 +43,30 @@ function ChampionsLeagueStats() {
     }
   };
 
-  const getValue = (stat, path) => {
-    const pathParts = path.split(".");
-    return pathParts.reduce((value, part) => {
-      const match = part.match(/^(.+)\[(\d+)\]$/);
-      if (match) {
-        const [_, arrayKey, index] = match;
-        return value?.[arrayKey]?.[parseInt(index, 10)] || undefined;
-      }
-      return value?.[part] || undefined;
-    }, stat);
-  };
+  const columnDefs = [
+    { headerName: "Player", field: "playerName", sortable: true, filter: true },
+    {
+      headerName: "Appearances",
+      field: "appearances",
+      sortable: true,
+      filter: true,
+    },
+    { headerName: "Goals", field: "goals", sortable: true, filter: true },
+    { headerName: "Assists", field: "assists", sortable: true, filter: true },
+    { headerName: "Yellow Cards", field: "yellowCards", sortable: true },
+    { headerName: "Red Cards", field: "redCards", sortable: true },
+    { headerName: "Minutes Played", field: "minutesPlayed", sortable: true },
+  ];
 
-  const handleSort = (clickedColumn) => {
-    const newDirection =
-      sortColumn === clickedColumn && sortDirection === "ascending"
-        ? "descending"
-        : "ascending";
-
-    setSortColumn(clickedColumn);
-    setSortDirection(newDirection);
-
-    const sortedPlayers = [...playersCL].sort((a, b) => {
-      const statA = a.statistics[0];
-      const statB = b.statistics[0];
-      const valueA = getValue(statA, clickedColumn);
-      const valueB = getValue(statB, clickedColumn);
-
-      if (valueA < valueB) return newDirection === "ascending" ? -1 : 1;
-      if (valueA > valueB) return newDirection === "ascending" ? 1 : -1;
-      return 0;
-    });
-
-    setPlayersCL(sortedPlayers);
-  };
+  const rowData = playersCL.map((player) => ({
+    playerName: player.player.name,
+    appearances: player.statistics[0]?.games?.appearences || 0,
+    goals: player.statistics[0]?.goals?.total || 0,
+    assists: player.statistics[0]?.goals?.assists || 0,
+    yellowCards: player.statistics[0]?.cards?.yellow || 0,
+    redCards: player.statistics[0]?.cards?.red || 0,
+    minutesPlayed: player.statistics[0]?.games?.minutes || 0,
+  }));
 
   return (
     <Container
@@ -85,10 +76,10 @@ function ChampionsLeagueStats() {
         padding: "0",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: "red",
       }}
     >
-      <Segment padded style={{ flex: 1 }}>
-        {/* Back Button using Link */}
+      <Segment padded style={{ flex: 1, backgroundColor: "red" }}>
         <Button as={Link} to="/" icon labelPosition="left">
           <Icon name="arrow left" />
           Back to Home
@@ -99,136 +90,24 @@ function ChampionsLeagueStats() {
         </Header>
 
         {loading ? (
-          <Loader active inline="centered" size="large" />
+          <Loader active inline="centered" size="large">
+            Loading player stats...
+          </Loader>
         ) : (
-          <Table celled sortable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell onClick={() => handleSort("playerName")}>
-                  Player
-                  {sortColumn === "playerName" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("statistics[0].games.appearences")}
-                >
-                  Appearances
-                  {sortColumn === "statistics[0].games.appearences" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("statistics[0].goals.total")}
-                >
-                  Goals
-                  {sortColumn === "statistics[0].goals.total" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("statistics[0].assists.total")}
-                >
-                  Assists
-                  {sortColumn === "statistics[0].assists.total" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("statistics[0].cards.yellow")}
-                >
-                  Yellow Cards
-                  {sortColumn === "statistics[0].cards.yellow" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("statistics[0].cards.red")}
-                >
-                  Red Cards
-                  {sortColumn === "statistics[0].cards.red" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  onClick={() => handleSort("statistics[0].games.minutes")}
-                >
-                  Minutes Played
-                  {sortColumn === "statistics[0].games.minutes" && (
-                    <Icon
-                      name={
-                        sortDirection === "ascending"
-                          ? "arrow up"
-                          : "arrow down"
-                      }
-                    />
-                  )}
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {playersCL.map((player) => (
-                <Table.Row key={player.player.id}>
-                  <Table.Cell>{player.player.name}</Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0]?.games?.appearences || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0]?.goals?.total || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0]?.assists?.total || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0]?.cards?.yellow || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0]?.cards?.red || 0}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {player.statistics[0]?.games?.minutes || 0}
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
+          <div
+            className="ag-theme-alpine"
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={columnDefs}
+              pagination={true}
+              domLayout="autoHeight"
+            />
+          </div>
         )}
       </Segment>
     </Container>

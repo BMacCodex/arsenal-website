@@ -41,7 +41,7 @@ function Fixtures() {
         flexDirection: "column",
       }}
     >
-      <Segment padded style={{ flex: 1 }}>
+      <Segment padded style={{ flex: 1, backgroundColor: "red" }}>
         {/* Back Button using Link */}
         <Button as={Link} to="/" icon labelPosition="left">
           <Icon name="arrow left" />

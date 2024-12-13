@@ -4,18 +4,18 @@ const apiFootball = axios.create({
   baseURL: "https://v3.football.api-sports.io",
   headers: {
     "x-rapidapi-host": "v3.football.api-sports.io",
-    "x-rapidapi-key": "668a264ea5bed89b4281eede93950299", // Replace with your actual API key
+    "x-rapidapi-key": "668a264ea5bed89b4281eede93950299",
   },
 });
 
 // Function to fetch fixtures for Arsenal
 export const getFixtures = async () => {
-  const teamId = 42; // Arsenal's team ID
+  const teamId = 42;
   const response = await apiFootball.get("/fixtures", {
     params: {
       team: teamId,
       season: 2024,
-      last: 10, // Adjust to get the last 20 results
+      last: 6,
     },
   });
   const fixtures = response.data.response;

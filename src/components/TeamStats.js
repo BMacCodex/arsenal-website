@@ -38,12 +38,14 @@ function TeamStats() {
         padding: "0",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: "red",
       }}
     >
       <Segment
         padded
         style={{
           flex: 1,
+          backgroundColor: "red",
         }}
       >
         <Header as="h2" textAlign="center">
@@ -54,7 +56,9 @@ function TeamStats() {
         <Button as={Link} to="/" primary icon="home" content="Back to Home" />
 
         {loading ? (
-          <Loader active inline="centered" size="large" />
+          <Loader active inline="centered" size="large">
+            Loading Team Stats...
+          </Loader>
         ) : teamStats ? (
           <Table celled>
             <Table.Body>
