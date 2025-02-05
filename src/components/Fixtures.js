@@ -75,7 +75,7 @@ function Fixtures() {
                   </Card.Meta>
                   <Card.Description>
                     <p>
-                      <strong>Venue:</strong> {fixture.fixture.venue.name}
+                      <strong>Venue</strong> {fixture.fixture.venue.name}
                     </p>
                     <p>
                       <strong>City:</strong> {fixture.fixture.venue.city}
